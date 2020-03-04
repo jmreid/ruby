@@ -271,6 +271,7 @@ class Net::HTTPResponse
       ensure
         orig_err = $!
         begin
+          self.content_length=inflate_body_io.total_out
           inflate_body_io.finish
         rescue => err
           raise orig_err || err
@@ -370,6 +371,13 @@ class Net::HTTPResponse
     def finish
       return if @inflate.total_in == 0
       @inflate.finish
+    end
+
+    ##
+    # Get the uncompressed size
+
+    def total_out
+      @inflate.total_out
     end
 
     ##
